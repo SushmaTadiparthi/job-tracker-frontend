@@ -53,7 +53,7 @@ const Register = () => {
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="Sushma Tadiparthi"
+                            placeholder="Enter your full name"
                             required
                         />
                     </div>
@@ -65,7 +65,7 @@ const Register = () => {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="sushma@gmail.com"
+                            placeholder="Enter your email"
                             required
                         />
                     </div>
