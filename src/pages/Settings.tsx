@@ -75,7 +75,7 @@ const Settings = () => {
                 <h1 style={styles.navTitle}>Job Tracker</h1>
                 <div style={styles.navRight}>
                     <Link to="/dashboard" style={styles.navLink}>Dashboard</Link>
-                    <span style={styles.welcome}>Hi, {user?.name}</span>
+
                 </div>
             </div>
 
