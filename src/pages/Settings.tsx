@@ -149,7 +149,6 @@ const Settings = () => {
 
                 {/* Danger Zone */}
                 <div style={styles.dangerCard}>
-                    <h3 style={styles.dangerTitle}>Danger Zone</h3>
                     <p style={styles.dangerText}>
                         Permanently delete your account and all job application data.
                         This action cannot be undone.

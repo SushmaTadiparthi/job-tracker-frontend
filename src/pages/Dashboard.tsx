@@ -118,7 +118,7 @@ const Dashboard = () => {
                         companyName: e.target.value,
                       })
                     }
-                    placeholder="Google"
+                    placeholder="Enter company name"
                     required
                   />
                 </div>
@@ -133,7 +133,7 @@ const Dashboard = () => {
                         role: e.target.value,
                       })
                     }
-                    placeholder="Software Engineer"
+                    placeholder="Enter job title"
                     required
                   />
                 </div>
@@ -148,7 +148,7 @@ const Dashboard = () => {
                         jobUrl: e.target.value,
                       })
                     }
-                    placeholder="https://careers.google.com/..."
+                    placeholder="e.g. https://careers.google.com/..."
                   />
                 </div>
                 <div style={styles.field}>
@@ -162,7 +162,7 @@ const Dashboard = () => {
                         notes: e.target.value,
                       })
                     }
-                    placeholder="Applied via LinkedIn"
+                    placeholder="Add notes"
                   />
                 </div>
               </div>
