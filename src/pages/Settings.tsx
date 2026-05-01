@@ -1,268 +1,264 @@
-import { useState } from "react"
-import { useNavigate, Link } from "react-router-dom"
-import api from "../api/axios"
-import { useAuth } from "../context/AuthContext"
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import api from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 
 const Settings = () => {
-    const [currentPassword, setCurrentPassword] = useState("")
-    const [newPassword, setNewPassword] = useState("")
-    const [confirmPassword, setConfirmPassword] = useState("")
-    const [pwMessage, setPwMessage] = useState("")
-    const [pwError, setPwError] = useState("")
-    const [pwLoading, setPwLoading] = useState(false)
-    const [deleteLoading, setDeleteLoading] = useState(false)
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [pwMessage, setPwMessage] = useState("");
+  const [pwError, setPwError] = useState("");
+  const [pwLoading, setPwLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
-    const { user, logout } = useAuth()
-    const navigate = useNavigate()
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
-    const handlePasswordUpdate = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setPwMessage("")
-        setPwError("")
+  const handlePasswordUpdate = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwMessage("");
+    setPwError("");
 
-        if (newPassword !== confirmPassword) {
-            setPwError("New passwords do not match")
-            return
-        }
+    if (newPassword !== confirmPassword) { setPwError("New passwords do not match"); return; }
+    if (newPassword.length < 6) { setPwError("Password must be at least 6 characters"); return; }
 
-        if (newPassword.length < 6) {
-            setPwError("Password must be at least 6 characters")
-            return
-        }
-
-        setPwLoading(true)
-        try {
-            await api.put("/api/user/password", { currentPassword, newPassword })
-            setPwMessage("Password updated successfully!")
-            setCurrentPassword("")
-            setNewPassword("")
-            setConfirmPassword("")
-        } catch (err: any) {
-            setPwError(err.response?.data?.message || "Current password is incorrect")
-        } finally {
-            setPwLoading(false)
-        }
+    setPwLoading(true);
+    try {
+      await api.put("/api/user/password", { currentPassword, newPassword });
+      setPwMessage("Password updated successfully!");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: any) {
+      setPwError(err.response?.data?.message || "Current password is incorrect");
+    } finally {
+      setPwLoading(false);
     }
+  };
 
-    const handleDeleteAccount = async () => {
-        const confirmed = window.confirm(
-            "Are you sure you want to delete your account? This will permanently delete all your job applications. This cannot be undone."
-        )
-        if (!confirmed) return
+  const handleDeleteAccount = async () => {
+    if (!window.confirm("Are you sure? This will permanently delete all your job applications and cannot be undone.")) return;
+    if (!window.confirm("Last warning — all your data will be permanently deleted. Continue?")) return;
 
-        const doubleConfirm = window.confirm(
-            "Last warning — all your data will be permanently deleted. Continue?"
-        )
-        if (!doubleConfirm) return
-
-        setDeleteLoading(true)
-        try {
-            await api.delete("/api/user/account")
-            logout()
-            navigate("/login")
-        } catch (err) {
-            alert("Failed to delete account. Please try again.")
-        } finally {
-            setDeleteLoading(false)
-        }
+    setDeleteLoading(true);
+    try {
+      await api.delete("/api/user/account");
+      logout();
+      navigate("/login");
+    } catch (err) {
+      alert("Failed to delete account. Please try again.");
+    } finally {
+      setDeleteLoading(false);
     }
+  };
 
-    return (
-        <div style={styles.container}>
+  const initials = user?.name
+    ?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) ?? "U";
 
-            {/* Navbar */}
-            <div style={styles.navbar}>
-                <h1 style={styles.navTitle}>Job Tracker</h1>
-                <div style={styles.navRight}>
-                    <Link to="/dashboard" style={styles.navLink}>Dashboard</Link>
+  return (
+    <div style={styles.container}>
+      {/* NAVBAR */}
+      <nav style={styles.navbar}>
+        <span style={styles.logoText}>
+          Job<span style={styles.logoAccent}>Tracker</span>
+        </span>
+        <Link to="/dashboard" style={styles.backLink}>
+          ← Back to Dashboard
+        </Link>
+      </nav>
 
-                </div>
+      <div style={styles.content}>
+        <h2 style={styles.pageTitle}>Account Settings</h2>
+
+        {/* Account Info */}
+        <div style={styles.card}>
+          <div style={styles.cardHeader}>
+            <div style={styles.avatarLg}>{initials}</div>
+            <div>
+              <p style={styles.accountName}>{user?.name}</p>
+              <p style={styles.accountEmail}>{user?.email}</p>
             </div>
-
-            <div style={styles.content}>
-                <h2 style={styles.pageTitle}>Account Settings</h2>
-
-                {/* Change Password */}
-                <div style={styles.card}>
-                    <h3 style={styles.cardTitle}>Change Password</h3>
-                    <p style={styles.cardSubtitle}>Update your password to keep your account secure</p>
-
-                    {pwMessage && <p style={styles.success}>{pwMessage}</p>}
-                    {pwError && <p style={styles.error}>{pwError}</p>}
-
-                    <form onSubmit={handlePasswordUpdate}>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Current Password</label>
-                            <input
-                                style={styles.input}
-                                type="password"
-                                value={currentPassword}
-                                onChange={e => setCurrentPassword(e.target.value)}
-                                placeholder="Enter current password"
-                                required
-                            />
-                        </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>New Password</label>
-                            <input
-                                style={styles.input}
-                                type="password"
-                                value={newPassword}
-                                onChange={e => setNewPassword(e.target.value)}
-                                placeholder="Min 6 characters"
-                                required
-                            />
-                        </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Confirm New Password</label>
-                            <input
-                                style={styles.input}
-                                type="password"
-                                value={confirmPassword}
-                                onChange={e => setConfirmPassword(e.target.value)}
-                                placeholder="Repeat new password"
-                                required
-                            />
-                        </div>
-                        <button
-                            style={pwLoading ? styles.buttonDisabled : styles.button}
-                            type="submit"
-                            disabled={pwLoading}
-                        >
-                            {pwLoading ? "Updating..." : "Update Password"}
-                        </button>
-                    </form>
-                </div>
-
-                {/* Account Info */}
-                <div style={styles.card}>
-                    <h3 style={styles.cardTitle}>Account Info</h3>
-                    <div style={styles.infoRow}>
-                        <span style={styles.infoLabel}>Name</span>
-                        <span style={styles.infoValue}>{user?.name}</span>
-                    </div>
-                    <div style={styles.infoRow}>
-                        <span style={styles.infoLabel}>Email</span>
-                        <span style={styles.infoValue}>{user?.email}</span>
-                    </div>
-                </div>
-
-                {/* Danger Zone */}
-                <div style={styles.dangerCard}>
-                    <p style={styles.dangerText}>
-                        Permanently delete your account and all job application data.
-                        This action cannot be undone.
-                    </p>
-                    <button
-                        style={deleteLoading ? styles.buttonDisabled : styles.deleteBtn}
-                        onClick={handleDeleteAccount}
-                        disabled={deleteLoading}
-                    >
-                        {deleteLoading ? "Deleting..." : "Delete My Account"}
-                    </button>
-                </div>
-            </div>
+          </div>
         </div>
-    )
-}
+
+        {/* Change Password */}
+        <div style={styles.card}>
+          <h3 style={styles.cardTitle}>Change Password</h3>
+          <p style={styles.cardSubtitle}>Update your password to keep your account secure</p>
+
+          {pwMessage && <p style={styles.success}>{pwMessage}</p>}
+          {pwError && <p style={styles.error}>{pwError}</p>}
+
+          <form onSubmit={handlePasswordUpdate}>
+            <div style={styles.field}>
+              <label style={styles.label}>Current Password</label>
+              <input style={styles.input} type="password" value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Enter current password" required />
+            </div>
+            <div style={styles.field}>
+              <label style={styles.label}>New Password</label>
+              <input style={styles.input} type="password" value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Min 6 characters" required />
+            </div>
+            <div style={styles.field}>
+              <label style={styles.label}>Confirm New Password</label>
+              <input style={styles.input} type="password" value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="Repeat new password" required />
+            </div>
+            <button style={pwLoading ? styles.buttonDisabled : styles.button}
+              type="submit" disabled={pwLoading}>
+              {pwLoading ? "Updating..." : "Update Password"}
+            </button>
+          </form>
+        </div>
+
+        {/* Danger Zone */}
+        <div style={styles.dangerCard}>
+          <h3 style={styles.dangerTitle}>Danger Zone</h3>
+          <p style={styles.dangerText}>
+            Permanently delete your account and all job application data. This cannot be undone.
+          </p>
+          <button
+            style={deleteLoading ? styles.buttonDisabled : styles.deleteBtn}
+            onClick={handleDeleteAccount}
+            disabled={deleteLoading}
+          >
+            {deleteLoading ? "Deleting..." : "Delete My Account"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const styles: Record<string, React.CSSProperties> = {
-    container: { minHeight: "100vh", backgroundColor: "#f0f2f5" },
-    navbar: {
-        backgroundColor: "#1a1a2e",
-        padding: "16px 32px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center"
-    },
-    navTitle: { color: "white", margin: 0, fontSize: "20px" },
-    navRight: { display: "flex", alignItems: "center", gap: "20px" },
-    navLink: { color: "#aaa", textDecoration: "none", fontSize: "14px" },
-    welcome: { color: "#aaa", fontSize: "14px" },
-    content: { maxWidth: "600px", margin: "0 auto", padding: "24px 16px" },
-    pageTitle: { color: "#1a1a2e", marginBottom: "24px" },
-    card: {
-        backgroundColor: "white",
-        borderRadius: "12px",
-        padding: "24px",
-        marginBottom: "20px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)"
-    },
-    cardTitle: { margin: "0 0 4px 0", color: "#1a1a2e", fontSize: "18px" },
-    cardSubtitle: { color: "#888", fontSize: "13px", marginBottom: "20px" },
-    field: { marginBottom: "16px" },
-    label: { display: "block", marginBottom: "6px", fontWeight: "500", fontSize: "14px" },
-    input: {
-        width: "100%",
-        padding: "10px 14px",
-        borderRadius: "8px",
-        border: "1px solid #ddd",
-        fontSize: "14px",
-        boxSizing: "border-box"
-    },
-    button: {
-        padding: "10px 24px",
-        backgroundColor: "#2E75B6",
-        color: "white",
-        border: "none",
-        borderRadius: "8px",
-        fontSize: "14px",
-        fontWeight: "600",
-        cursor: "pointer"
-    },
-    buttonDisabled: {
-        padding: "10px 24px",
-        backgroundColor: "#aaa",
-        color: "white",
-        border: "none",
-        borderRadius: "8px",
-        fontSize: "14px",
-        cursor: "not-allowed"
-    },
-    success: {
-        color: "#2E7D32",
-        backgroundColor: "#E8F5E9",
-        padding: "10px",
-        borderRadius: "6px",
-        marginBottom: "16px",
-        fontSize: "14px"
-    },
-    error: {
-        color: "#C00000",
-        backgroundColor: "#fff0f0",
-        padding: "10px",
-        borderRadius: "6px",
-        marginBottom: "16px",
-        fontSize: "14px"
-    },
-    infoRow: {
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "12px 0",
-        borderBottom: "1px solid #f0f0f0"
-    },
-    infoLabel: { color: "#888", fontSize: "14px" },
-    infoValue: { color: "#1a1a2e", fontWeight: "500", fontSize: "14px" },
-    dangerCard: {
-        backgroundColor: "white",
-        borderRadius: "12px",
-        padding: "24px",
-        marginBottom: "20px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-        border: "1px solid #ffcccc"
-    },
-    dangerTitle: { margin: "0 0 8px 0", color: "#C00000", fontSize: "18px" },
-    dangerText: { color: "#888", fontSize: "13px", marginBottom: "16px" },
-    deleteBtn: {
-        padding: "10px 24px",
-        backgroundColor: "#C00000",
-        color: "white",
-        border: "none",
-        borderRadius: "8px",
-        fontSize: "14px",
-        fontWeight: "600",
-        cursor: "pointer"
-    }
-}
+  container: { minHeight: "100vh", backgroundColor: "#f1f5f9" },
 
-export default Settings
+  navbar: {
+    backgroundColor: "#0f172a",
+    height: "60px",
+    padding: "0 28px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottom: "1px solid #1e293b",
+    position: "sticky",
+    top: 0,
+    zIndex: 100,
+  },
+  logoText: { fontSize: "18px", fontWeight: "700", color: "white", letterSpacing: "-0.3px" },
+  logoAccent: { color: "#818cf8" },
+  backLink: {
+    fontSize: "13px",
+    color: "#94a3b8",
+    textDecoration: "none",
+    fontWeight: "500",
+  },
+
+  content: { maxWidth: "600px", margin: "0 auto", padding: "32px 16px" },
+  pageTitle: { fontSize: "20px", fontWeight: "700", color: "#0f172a", marginBottom: "24px" },
+
+  card: {
+    backgroundColor: "white",
+    borderRadius: "10px",
+    padding: "24px",
+    marginBottom: "20px",
+    border: "1px solid #e2e8f0",
+  },
+  cardHeader: { display: "flex", alignItems: "center", gap: "14px" },
+  avatarLg: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "10px",
+    background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "16px",
+    fontWeight: "700",
+    color: "white",
+    flexShrink: 0,
+  },
+  accountName: { margin: 0, fontSize: "15px", fontWeight: "700", color: "#0f172a" },
+  accountEmail: { margin: "3px 0 0 0", fontSize: "13px", color: "#64748b" },
+
+  cardTitle: { margin: "0 0 4px 0", fontSize: "16px", fontWeight: "700", color: "#0f172a" },
+  cardSubtitle: { color: "#94a3b8", fontSize: "13px", marginBottom: "20px", marginTop: "2px" },
+
+  field: { marginBottom: "16px" },
+  label: { display: "block", marginBottom: "6px", fontWeight: "600", fontSize: "13px", color: "#374151" },
+  input: {
+    width: "100%",
+    padding: "10px 14px",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+    fontSize: "14px",
+    boxSizing: "border-box",
+    outline: "none",
+    backgroundColor: "#f8fafc",
+    color: "#0f172a",
+  },
+  button: {
+    padding: "10px 24px",
+    background: "linear-gradient(135deg, #3b82f6, #6366f1)",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "600",
+    cursor: "pointer",
+  },
+  buttonDisabled: {
+    padding: "10px 24px",
+    backgroundColor: "#cbd5e1",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "14px",
+    cursor: "not-allowed",
+  },
+  success: {
+    color: "#166534",
+    backgroundColor: "#f0fdf4",
+    border: "1px solid #bbf7d0",
+    padding: "10px 14px",
+    borderRadius: "8px",
+    marginBottom: "16px",
+    fontSize: "13px",
+  },
+  error: {
+    color: "#991b1b",
+    backgroundColor: "#fef2f2",
+    border: "1px solid #fecaca",
+    padding: "10px 14px",
+    borderRadius: "8px",
+    marginBottom: "16px",
+    fontSize: "13px",
+  },
+
+  dangerCard: {
+    backgroundColor: "white",
+    borderRadius: "10px",
+    padding: "24px",
+    marginBottom: "20px",
+    border: "1px solid #fecaca",
+  },
+  dangerTitle: { margin: "0 0 8px 0", fontSize: "16px", fontWeight: "700", color: "#991b1b" },
+  dangerText: { color: "#94a3b8", fontSize: "13px", marginBottom: "16px" },
+  deleteBtn: {
+    padding: "10px 24px",
+    backgroundColor: "#dc2626",
+    color: "white",
+    border: "none",
+    borderRadius: "8px",
+    fontSize: "14px",
+    fontWeight: "600",
+    cursor: "pointer",
+  },
+};
+
+export default Settings;
