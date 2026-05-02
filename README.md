@@ -70,22 +70,25 @@ Open http://localhost:5173 in your browser.
 
 ## Project Structure
 
+```
 src/
 ├── pages/
-│   ├── Login.tsx
-│   ├── Register.tsx
-│   ├── Dashboard.tsx
-│   └── Settings.tsx
+│   ├── Login.tsx              # Login page
+│   ├── Register.tsx           # Registration page
+│   ├── Dashboard.tsx          # Main page with job list
+│   └── Settings.tsx           # User settings
 ├── components/
-│   ├── JobCard.tsx
-│   └── Toast.tsx
+│   ├── JobCard.tsx            # Job card component
+│   └── Toast.tsx              # Notification component
 ├── context/
-│   └── AuthContext.tsx
+│   └── AuthContext.tsx        # Global auth state
 ├── api/
-│   └── axios.ts
+│   └── axios.ts               # API client
 ├── types/
-│   └── index.ts
-└── App.tsx
+│   └── index.ts               # TypeScript types
+├── App.tsx                    # Main app
+└── main.tsx                   # Entry point
+```
 
 ---
 
