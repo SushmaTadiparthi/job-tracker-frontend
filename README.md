@@ -1,4 +1,6 @@
 Job Tracker - Frontend
+
+
 A modern, responsive web application built with React and TypeScript for tracking job applications.
 
 Live Demo: https://job-tracker-frontend-six-pi.vercel.app
