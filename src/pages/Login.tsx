@@ -96,16 +96,18 @@ const styles: Record<string, React.CSSProperties> = {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#f1f5f9",
+    padding: "16px",
   },
   card: {
     backgroundColor: "white",
-    padding: "40px",
+    padding: "32px 24px",  // slightly tighter on small screens
     borderRadius: "12px",
     border: "1px solid #e2e8f0",
     boxShadow: "0 4px 24px rgba(0,0,0,0.08)",
     width: "100%",
     maxWidth: "400px",
-  },
+    boxSizing: "border-box" as const,  // ← add this
+},
   logo: {
     textAlign: "center",
     fontSize: "24px",

@@ -20,8 +20,14 @@ const Settings = () => {
     setPwMessage("");
     setPwError("");
 
-    if (newPassword !== confirmPassword) { setPwError("New passwords do not match"); return; }
-    if (newPassword.length < 6) { setPwError("Password must be at least 6 characters"); return; }
+    if (newPassword !== confirmPassword) {
+      setPwError("New passwords do not match");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setPwError("Password must be at least 6 characters");
+      return;
+    }
 
     setPwLoading(true);
     try {
@@ -31,15 +37,27 @@ const Settings = () => {
       setNewPassword("");
       setConfirmPassword("");
     } catch (err: any) {
-      setPwError(err.response?.data?.message || "Current password is incorrect");
+      setPwError(
+        err.response?.data?.message || "Current password is incorrect",
+      );
     } finally {
       setPwLoading(false);
     }
   };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm("Are you sure? This will permanently delete all your job applications and cannot be undone.")) return;
-    if (!window.confirm("Last warning — all your data will be permanently deleted. Continue?")) return;
+    if (
+      !window.confirm(
+        "Are you sure? This will permanently delete all your job applications and cannot be undone.",
+      )
+    )
+      return;
+    if (
+      !window.confirm(
+        "Last warning — all your data will be permanently deleted. Continue?",
+      )
+    )
+      return;
 
     setDeleteLoading(true);
     try {
@@ -53,8 +71,13 @@ const Settings = () => {
     }
   };
 
-  const initials = user?.name
-    ?.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2) ?? "U";
+  const initials =
+    user?.name
+      ?.split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) ?? "U";
 
   return (
     <div style={styles.container}>
@@ -85,7 +108,9 @@ const Settings = () => {
         {/* Change Password */}
         <div style={styles.card}>
           <h3 style={styles.cardTitle}>Change Password</h3>
-          <p style={styles.cardSubtitle}>Update your password to keep your account secure</p>
+          <p style={styles.cardSubtitle}>
+            Update your password to keep your account secure
+          </p>
 
           {pwMessage && <p style={styles.success}>{pwMessage}</p>}
           {pwError && <p style={styles.error}>{pwError}</p>}
@@ -93,24 +118,42 @@ const Settings = () => {
           <form onSubmit={handlePasswordUpdate}>
             <div style={styles.field}>
               <label style={styles.label}>Current Password</label>
-              <input style={styles.input} type="password" value={currentPassword}
+              <input
+                style={styles.input}
+                type="password"
+                value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
-                placeholder="Enter current password" required />
+                placeholder="Enter current password"
+                required
+              />
             </div>
             <div style={styles.field}>
               <label style={styles.label}>New Password</label>
-              <input style={styles.input} type="password" value={newPassword}
+              <input
+                style={styles.input}
+                type="password"
+                value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Min 6 characters" required />
+                placeholder="Min 6 characters"
+                required
+              />
             </div>
             <div style={styles.field}>
               <label style={styles.label}>Confirm New Password</label>
-              <input style={styles.input} type="password" value={confirmPassword}
+              <input
+                style={styles.input}
+                type="password"
+                value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Repeat new password" required />
+                placeholder="Repeat new password"
+                required
+              />
             </div>
-            <button style={pwLoading ? styles.buttonDisabled : styles.button}
-              type="submit" disabled={pwLoading}>
+            <button
+              style={pwLoading ? styles.buttonDisabled : styles.button}
+              type="submit"
+              disabled={pwLoading}
+            >
               {pwLoading ? "Updating..." : "Update Password"}
             </button>
           </form>
@@ -120,7 +163,8 @@ const Settings = () => {
         <div style={styles.dangerCard}>
           <h3 style={styles.dangerTitle}>Danger Zone</h3>
           <p style={styles.dangerText}>
-            Permanently delete your account and all job application data. This cannot be undone.
+            Permanently delete your account and all job application data. This
+            cannot be undone.
           </p>
           <button
             style={deleteLoading ? styles.buttonDisabled : styles.deleteBtn}
@@ -150,7 +194,12 @@ const styles: Record<string, React.CSSProperties> = {
     top: 0,
     zIndex: 100,
   },
-  logoText: { fontSize: "18px", fontWeight: "700", color: "white", letterSpacing: "-0.3px" },
+  logoText: {
+    fontSize: "18px",
+    fontWeight: "700",
+    color: "white",
+    letterSpacing: "-0.3px",
+  },
   logoAccent: { color: "#818cf8" },
   backLink: {
     fontSize: "13px",
@@ -158,9 +207,13 @@ const styles: Record<string, React.CSSProperties> = {
     textDecoration: "none",
     fontWeight: "500",
   },
-
-  content: { maxWidth: "600px", margin: "0 auto", padding: "32px 16px" },
-  pageTitle: { fontSize: "20px", fontWeight: "700", color: "#0f172a", marginBottom: "24px" },
+  content: { maxWidth: "600px", margin: "0 auto", padding: "24px 16px" },
+  pageTitle: {
+    fontSize: "20px",
+    fontWeight: "700",
+    color: "#0f172a",
+    marginBottom: "24px",
+  },
 
   card: {
     backgroundColor: "white",
@@ -183,14 +236,35 @@ const styles: Record<string, React.CSSProperties> = {
     color: "white",
     flexShrink: 0,
   },
-  accountName: { margin: 0, fontSize: "15px", fontWeight: "700", color: "#0f172a" },
+  accountName: {
+    margin: 0,
+    fontSize: "15px",
+    fontWeight: "700",
+    color: "#0f172a",
+  },
   accountEmail: { margin: "3px 0 0 0", fontSize: "13px", color: "#64748b" },
 
-  cardTitle: { margin: "0 0 4px 0", fontSize: "16px", fontWeight: "700", color: "#0f172a" },
-  cardSubtitle: { color: "#94a3b8", fontSize: "13px", marginBottom: "20px", marginTop: "2px" },
+  cardTitle: {
+    margin: "0 0 4px 0",
+    fontSize: "16px",
+    fontWeight: "700",
+    color: "#0f172a",
+  },
+  cardSubtitle: {
+    color: "#94a3b8",
+    fontSize: "13px",
+    marginBottom: "20px",
+    marginTop: "2px",
+  },
 
   field: { marginBottom: "16px" },
-  label: { display: "block", marginBottom: "6px", fontWeight: "600", fontSize: "13px", color: "#374151" },
+  label: {
+    display: "block",
+    marginBottom: "6px",
+    fontWeight: "600",
+    fontSize: "13px",
+    color: "#374151",
+  },
   input: {
     width: "100%",
     padding: "10px 14px",
@@ -247,7 +321,12 @@ const styles: Record<string, React.CSSProperties> = {
     marginBottom: "20px",
     border: "1px solid #fecaca",
   },
-  dangerTitle: { margin: "0 0 8px 0", fontSize: "16px", fontWeight: "700", color: "#991b1b" },
+  dangerTitle: {
+    margin: "0 0 8px 0",
+    fontSize: "16px",
+    fontWeight: "700",
+    color: "#991b1b",
+  },
   dangerText: { color: "#94a3b8", fontSize: "13px", marginBottom: "16px" },
   deleteBtn: {
     padding: "10px 24px",
